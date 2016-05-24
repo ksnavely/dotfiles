@@ -2,7 +2,7 @@
 - hosts: all
   vars:
 #    ansible_python_interpreter: "/usr/local/bin/python2"
-    git_email: "chewbranca@apache.org"
+    git_email: "kjsnavely@gmail.com"
 
   tasks:
 
@@ -23,20 +23,10 @@
       apt: update_cache=yes
       sudo: yes
 
-    - name: Install Emacs24 on Debian
-      apt: name=emacs24-nox state=latest default_release=wheezy-backports
-      sudo: yes
-      when: ansible_distribution == 'Debian'
-
     - name: Install libcurl on Debian
       apt: name=libcurl4-openssl-dev state=latest default_release=wheezy-backports
       sudo: yes
       when: ansible_distribution == 'Debian'
-
-    - name: Install Emacs24 on Ubuntu
-      apt: name=emacs24-nox state=latest
-      sudo: yes
-      when: ansible_distribution == 'Ubuntu'
 
     - name: Install libcurl on Ubuntu
       apt: name=libcurl4-openssl-dev
@@ -80,24 +70,18 @@
         - iotop
         - linux-tools-3.2
 
-        # erln8 deps
-        - fop
-        - unixodbc-dev
-        - libglib2.0-dev
-        - autoconf
-
         # systemtap deps
         - gettext
         - libdw-dev
+
+        # cool stuff
+        - haproxy
+        - virtualenv
 
       sudo: yes
 
     - file: path=/home/{{ ansible_ssh_user }}/src state=directory
     - file: path=/home/{{ ansible_ssh_user }}/bin state=directory
-
-    - name: Install netrc
-      copy: src=files/netrc dest=/home/{{ ansible_ssh_user }}/.netrc mode=0400
-
 
     - name: Clone dotfiles repo
       git: repo="https://github.com/chewbranca/dotfiles.git"
@@ -114,7 +98,6 @@
             group={{ ansible_ssh_user }}
       with_items:
         - { path: 'tmux.conf', dest: '.tmux.conf' }
-        - { path: 'emacs.d', dest: '.emacs.d' }
 
     - name: Erlang cookie
       copy: src=files/erlang.cookie dest=/home/{{ ansible_ssh_user }}/.erlang.cookie
@@ -125,36 +108,8 @@
     - name: Git ignore
       copy: src=files/gitignore_global dest=/home/{{ ansible_ssh_user }}/.gitignore_global
 
-    # - name: Fetch rebar
-    #   get_url: url=https://github.com/rebar/rebar/wiki/rebar
-    #            dest=/home/{{ ansible_ssh_user }}/bin/rebar
-
-    # - name: Make rebar executable
-    #   file: path=/home/{{ ansible_ssh_user }}/bin/rebar mode=0755
-
-    # - name: Fetch CouchDB
-    #   git: repo="https://git-wip-us.apache.org/repos/asf/couchdb.git"
-    #        dest=/home/{{ ansible_ssh_user }}/src/couchdb
-    #        update=no
-    #        clone=yes
-
     # install Erlang
-    # - include: erln8.yml
-
-    # - name: CouchDB .edts file
-    #   copy: src=files/couchdb_edts dest=/home/{{ ansible_ssh_user }}/src/couchdb/.edts
-
-    # - name: Fetch EDTS
-    #   git: repo="https://github.com/chewbranca/edts.git"
-    #        dest=/home/{{ ansible_ssh_user }}/src/dotfiles/emacs.d/plugins/edts
-    #        update=no
-    #        clone=yes
-    #        accept_hostkey=yes
-
-    # - name: Build EDTS
-    #   # FIXME: .gitmodule should switch to the branch
-    #   shell: 'cd /home/{{ ansible_ssh_user }}/src/dotfiles/emacs.d/plugins/edts; git checkout chewbranca-hacks; make'
-    #   run_once: true
+    #- include: erln8.yml
 
     - name: Install pip modules
       pip: name={{ item }}
@@ -163,7 +118,5 @@
         - grequests
       sudo: yes
 
-    # install Ruby
-    # - include: ruby.yml
-
     - include: vim.yml
+    - include: cloudant.yml

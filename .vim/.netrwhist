@@ -1,0 +1,11 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =9
+let g:netrw_dirhist_1='/Users/Kyle/.cirrus'
+let g:netrw_dirhist_2='/Users/Kyle/programming/cloudant/ops/scripts/48577-cloudant-user-shards-archival'
+let g:netrw_dirhist_3='/Users/Kyle/programming/cloudant/chef-repo/cookbooks/sarnie/attributes'
+let g:netrw_dirhist_4='/Users/Kyle/programming/dotfiles/vagrant_files'
+let g:netrw_dirhist_5='/Users/Kyle/programming/cloudant/dashmaster/couchdb-fauxton/dist/debug'
+let g:netrw_dirhist_6='/Users/Kyle/programming/website/website/server/static/images/rockfall'
+let g:netrw_dirhist_7='/Users/Kyle/programming/cloudant/emissions_test/emissions_test/suites/wilson'
+let g:netrw_dirhist_8='/Users/Kyle/programming/cloudant/chef-repo/cookbooks/glum/attributes'
+let g:netrw_dirhist_9='/Users/Kyle/programming/cloudant/chef-repo/cookbooks/pyenv-ext/attributes'

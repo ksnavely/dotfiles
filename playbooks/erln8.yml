@@ -1,16 +1,16 @@
 ---
 
-# - name: Install erln8 deps
-#   apt: name={{ item }} state=latest update_cache=yes
-#   with_items:
-#     - fop
-#     - unixodbc-dev
-#     - libglib2.0-dev
-#     - autoconf
+- name: Install erln8 deps
+  apt: name={{ item }} state=latest update_cache=yes
+  sudo: true
+  with_items:
+    - fop
+    - unixodbc-dev
+    - libglib2.0-dev
+    - autoconf
 
 - name: Fetch rebar
-  get_url: url=https://github.com/rebar/rebar/wiki/rebar
-  dest=/home/{{ ansible_ssh_user }}/bin/rebar
+  get_url: url=https://github.com/rebar/rebar/wiki/rebar dest=/home/{{ ansible_ssh_user }}/bin/rebar
 
 - name: Make rebar executable
   file: path=/home/{{ ansible_ssh_user }}/bin/rebar mode=0755
@@ -21,11 +21,9 @@
        update=no
        clone=yes
 
-
 - name: Install systemtap
   shell: 'apt-get install -y systemtap linux-image-$(uname -r)-dbg linux-headers-$(uname -r)'
   sudo: yes
-
 
 - name: Clone erln8
   git: repo="https://github.com/metadave/erln8.git"
@@ -34,50 +32,25 @@
        clone=yes
        accept_hostkey=yes
 
-
 - name: Compile erln8
-  command: make
-           chdir=/home/{{ ansible_ssh_user }}/src/erln8
-           creates=/home/{{ ansible_ssh_user }}/src/erln8/erln8
-
+  command: make chdir=/home/{{ ansible_ssh_user }}/src/erln8 creates=/home/{{ ansible_ssh_user }}/src/erln8/erln8
 
 - name: Install erln8
-  command: make install
-           chdir=/home/{{ ansible_ssh_user }}/src/erln8
-           creates=/usr/local/bin/erln8
+  command: make install chdir=/home/{{ ansible_ssh_user }}/src/erln8 creates=/usr/local/bin/erln8
   sudo: yes
-
 
 - name: Setup erln8
   command: erln8 --init
   run_once: true
 
-
-- name: Install erln8 config
-  copy: src=files/erln8.config dest=/home/{{ ansible_ssh_user }}/.erln8.d/config
-
+#- name: Install erln8 config
+#  copy: src=files/erln8.config dest=/home/{{ ansible_ssh_user }}/.erln8.d/config
 
 - name: Fetch Erlang src
   command: erln8 --clone default
   run_once: true
 
-
 - name: Build default Erlang
-  command: erln8 --build --tag OTP-17.5 --id otp-17.5 --config debug_linux
-  run_once: true
-
-
-- name: CouchDB .edts file
-  copy: src=files/couchdb_edts dest=/home/{{ ansible_ssh_user }}/src/couchdb/.edts
-
-- name: Fetch EDTS
-  git: repo="https://github.com/chewbranca/edts.git"
-       dest=/home/{{ ansible_ssh_user }}/src/dotfiles/emacs.d/plugins/edts
-       update=no
-       clone=yes
-       accept_hostkey=yes
-
-- name: Build EDTS
-  # FIXME: .gitmodule should switch to the branch
-  shell: 'cd /home/{{ ansible_ssh_user }}/src/dotfiles/emacs.d/plugins/edts; git checkout chewbranca-hacks; make'
+#  command: erln8 --build --tag OTP-17.5 --id otp-17.5 --config debug_linux
+  command: erln8 --build --tag OTP-17.5 --id otp-17.5
   run_once: true
